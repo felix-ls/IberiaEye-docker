@@ -11,6 +11,10 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
+      - name: Get version
+        id: get_version
+        run: echo ::set-output name=VERSION::$(date +%F)
+
       - name: Docker Login
         uses: docker/login-action@v2.0.0
         with:
@@ -28,9 +32,5 @@ jobs:
           context: .
           platforms: linux/arm64,linux/amd64
           push: true
-          tags: enticeu/iberiaeye
+          tags: enticeu/iberiaeye,enticeu/iberiaeye:${{ steps.get_version.outputs.VERSION }}
           
-#      - name: Build and push Docker images
-#        run: |
-#          cd checkchan-dist/docker
-#          docker buildx build -t enticeu/iberiaeye:$(date +%F) -t enticeu/iberiaeye  --platform=linux/amd64,linux/arm64 --push .
