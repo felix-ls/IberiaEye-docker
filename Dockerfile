@@ -2,25 +2,21 @@ FROM --platform=$TARGETPLATFORM node AS builder
 
 RUN git clone -b vant https://github.com/AegirTech/IberiaEye.git && \
     cd IberiaEye && \
-    npm i -g npm && npm i
+    npm i -g npm && npm i && \
+    sed -i "s#http.*:2000/#http://127.0.0.1:2000/#g" /IberiaEye/.env.production && \
+    npm run build
 
-FROM --platform=$TARGETPLATFORM alpine
+FROM --platform=$TARGETPLATFORM nginx:alpine
 
 ENV URL=http://127.0.0.1:2000/
 
-COPY --from=builder /IberiaEye /IberiaEye
-COPY start.sh /IberiaEye
-COPY .env.local /IberiaEye
-
-WORKDIR /IberiaEye
+COPY --from=builder /IberiaEye/dist/ /dist
+COPY default.conf /etc/nginx/conf.d/default.conf
+COPY docker-entrypoint.sh /
 
 RUN apk update && apk upgrade -U -a && \
-    apk add --no-cache npm && \
-    npm config set registry https://registry.npm.taobao.org && \
     echo "Asia/Shanghai" > /etc/timezone && \
-    chmod +x /IberiaEye/start.sh && \
-    rm -rf /tmp/* /var/tmp/* /var/cache/apk/* /var/cache/distfiles/* 
+    chmod +x /docker-entrypoint.sh && \
+    rm -rf /tmp/* /var/tmp/* /var/cache/apk/* /var/cache/distfiles/*
 
 EXPOSE 5173
-
-ENTRYPOINT ["/IberiaEye/start.sh"] 
