@@ -30,7 +30,8 @@ jobs:
         uses: docker/build-push-action@v3
         with:
           context: .
-          platforms: linux/arm64,linux/amd64
+          platforms: linux/amd64
           push: true
-          tags: ${{ secrets.USERNAME }}/iberiaeye,${{ secrets.USERNAME }}/iberiaeye:vant,${{ secrets.USERNAME }}/iberiaeye:${{ steps.get_version.outputs.VERSION }}
+#          tags: ${{ secrets.USERNAME }}/iberiaeye,${{ secrets.USERNAME }}/iberiaeye:vant,${{ secrets.USERNAME }}/iberiaeye:${{ steps.get_version.outputs.VERSION }}
+          tags: ${{ secrets.USERNAME }}/iberiaeye:main,${{ secrets.USERNAME }}/iberiaeye:${{ steps.get_version.outputs.VERSION }}
           

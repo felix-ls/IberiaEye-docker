@@ -1,10 +1,11 @@
-FROM --platform=$TARGETPLATFORM node AS builder
+FROM node:16 AS builder
 
-RUN git clone -b vant https://github.com/AegirTech/IberiaEye.git && \
+RUN git clone -b main https://github.com/AegirTech/IberiaEye.git && \
     cd IberiaEye && \
-    npm i -g npm && npm i && \
-    sed -i "s#http.*:2000/#http://127.0.0.1:2000/#g" /IberiaEye/.env.production && \
-    npm run build
+    npm i -g npm && npm i -g pnpm && \
+    pnpm install && \
+    sed -i "s#baseURL: '.*/'#baseURL: 'http://127.0.0.1:2000/'#g" /IberiaEye/nuxt.config.js
+RUN cd IberiaEye && pnpm run build
 
 FROM --platform=$TARGETPLATFORM nginx:alpine
 
@@ -19,4 +20,4 @@ RUN apk update && apk upgrade -U -a && \
     chmod +x /docker-entrypoint.sh && \
     rm -rf /tmp/* /var/tmp/* /var/cache/apk/* /var/cache/distfiles/*
 
-EXPOSE 5173
+EXPOSE 8000
