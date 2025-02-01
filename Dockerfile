@@ -7,11 +7,14 @@
 #     sed -i "s#baseURL: '.*/'#baseURL: 'http://127.0.0.1:2000/'#g" /IberiaEye/nuxt.config.js
 # RUN cd IberiaEye && pnpm run build
 
-FROM --platform=$TARGETPLATFORM nginx:stable-alpine-slim
+#FROM --platform=$TARGETPLATFORM nginx:stable-alpine-slim
 
+FROM nginx:stable-alpine-slim
+
+ENV PORT=8000
 ENV URL=http://127.0.0.1:2000/
 
-COPY  IberiaEye/dist/ /dist
+COPY IberiaEye/dist/ /dist
 COPY default.conf /etc/nginx/conf.d/default.conf
 COPY docker-entrypoint.sh /
 
@@ -20,4 +23,4 @@ RUN apk update && apk upgrade -U -a && \
     chmod +x /docker-entrypoint.sh && \
     rm -rf /tmp/* /var/tmp/* /var/cache/apk/* /var/cache/distfiles/*
 
-EXPOSE 8000
+#EXPOSE 8000

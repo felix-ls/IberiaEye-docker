@@ -14,7 +14,8 @@ if [ "$1" = "nginx" -o "$1" = "nginx-debug" ]; then
         echo >&3 "$0: /docker-entrypoint.d/ is not empty, will attempt to perform configuration"
 
         echo >&3 "$0: Looking for shell scripts in /docker-entrypoint.d/"
-
+        
+        sed -i "s#8000;#${PORT};#g" /etc/nginx/conf.d/default.conf
         sed -i "s#http://127.0.0.1:2000/#${URL}#g" /dist/_nuxt/*.js
 
         find "/docker-entrypoint.d/" -follow -type f -print | sort -V | while read -r f; do
